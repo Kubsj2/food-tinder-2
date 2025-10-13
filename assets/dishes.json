@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "nazwa": "Pierogi ruskie",
+    "kategoria": "Danie główne",
+    "kuchnia": "Polska",
+    "zdjecie_url": "https://example.com/pierogi.jpg"
+  },
+  {
+    "id": 2,
+    "nazwa": "Spaghetti Bolognese",
+    "kategoria": "Danie główne",
+    "kuchnia": "Włoska",
+    "zdjecie_url": "https://example.com/spaghetti.jpg"
+  },
+  {
+    "id": 3,
+    "nazwa": "Ramen",
+    "kategoria": "Zupa",
+    "kuchnia": "Azjatycka",
+    "zdjecie_url": "https://example.com/ramen.jpg"
+  }
+]
