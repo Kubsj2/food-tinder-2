@@ -28,9 +28,11 @@ export default function ScrollScreen() {
   const rotate = useSharedValue(0);
   const nextOpacity = useSharedValue(0);
 
-  useEffect(() => {
-    setDishes(localData);
-  }, []);
+    useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((fetchedJson) => setDishes(fetchedJson));
+    }, []);
 
   const handleSwipe = (direction: "left" | "right") => {
     const current = dishes[currentIndex];
