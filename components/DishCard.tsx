@@ -16,18 +16,18 @@ export default function DishCard({ dish, translateX, rotate }: DishCardProps) {
       { rotate: `${rotate.value}deg` },
     ],
   }));
-
+  console.log(dish);
   return (
     <Animated.View style={[animatedStyle, styles.card]}>
       <Image
-        source={{ uri: dish.zdjecie_url }}
+        source={{ uri: dish.image_url_full }}
         style={styles.image}
         resizeMode="cover"
       />
       <View style={styles.content}>
-        <Text style={styles.title}>{dish.nazwa}</Text>
-        <Text style={styles.subtitle}>{dish.kuchnia}</Text>
-        <Text style={styles.category}>{dish.kategoria}</Text>
+        <Text style={styles.title}>{dish.name}</Text>
+        <Text style={styles.subtitle}>{dish.flavour.name}</Text>
+        <Text style={styles.category}>{dish.cuisine.name}</Text>
       </View>
     </Animated.View>
   );
