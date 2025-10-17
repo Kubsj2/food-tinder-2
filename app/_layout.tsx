@@ -1,28 +1,38 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { ActivityIndicator, StyleSheet, Text, View, Dimensions } from "react-native";
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import React, { useEffect } from 'react';
+import { Slot, useRouter, useSegments } from 'expo-router';
+import { ActivityIndicator, View } from 'react-native';
+import { AuthProvider, useAuth } from '@/lib/auth/AuthContext';
+import { ThemeProvider } from '@/lib/theme';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+function ProtectedSlot() {
+  const { status } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+  const inAuthGroup = segments[0] === '(auth)';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (status === 'unauthenticated' && !inAuthGroup) router.replace('/(auth)/login');
+    if (status === 'authenticated' && inAuthGroup) router.replace('/(tabs)');
+  }, [status, inAuthGroup]);
+
+  if (status === 'loading') {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return <Slot />;
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-  
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        </Stack>
-      
-      <StatusBar style="auto" />
+    <ThemeProvider>
+      <AuthProvider>
+        <ProtectedSlot />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
-
