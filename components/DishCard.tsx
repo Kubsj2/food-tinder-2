@@ -9,6 +9,12 @@ interface DishCardProps {
   rotate: SharedValue<number>;
 }
 
+type ParamType = 'category' | 'cuisine' | 'flavour';
+
+function getParamName(dish: any, type: ParamType) {
+  return dish?.parameters?.find?.((p: any) => p?.type === type)?.name;
+}
+
 export default function DishCard({ dish, translateX, rotate }: DishCardProps) {
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -16,18 +22,25 @@ export default function DishCard({ dish, translateX, rotate }: DishCardProps) {
       { rotate: `${rotate.value}deg` },
     ],
   }));
-  console.log(dish);
+
+  const imageUri = dish?.image_url_full || dish?.image_url || undefined;
+
+  // Nowe API: flavour/cuisine z `parameters[]`; fallback do starych pól, jeśli jeszcze gdzieś przyjdą
+  const flavour = getParamName(dish, 'flavour') ?? dish?.flavour?.name;
+  const cuisine = getParamName(dish, 'cuisine') ?? dish?.cuisine?.name;
+
   return (
     <Animated.View style={[animatedStyle, styles.card]}>
-      <Image
-        source={{ uri: dish.image_url_full }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      {imageUri ? (
+        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+      ) : (
+        <View style={[styles.image, styles.imagePlaceholder]} />
+      )}
+
       <View style={styles.content}>
-        <Text style={styles.title}>{dish.name}</Text>
-        <Text style={styles.subtitle}>{dish.flavour.name}</Text>
-        <Text style={styles.category}>{dish.cuisine.name}</Text>
+        <Text style={styles.title}>{dish?.name || 'Bez nazwy'}</Text>
+        {!!flavour && <Text style={styles.subtitle}>{flavour}</Text>}
+        {!!cuisine && <Text style={styles.category}>{cuisine}</Text>}
       </View>
     </Animated.View>
   );
@@ -49,6 +62,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 320,
   },
+  imagePlaceholder: {
+    backgroundColor: '#E5E7EB',
+  },
   content: {
     padding: 20,
   },
@@ -60,7 +76,11 @@ const styles = StyleSheet.create({
   subtitle: {
     color: '#374151',
     fontSize: 18,
-    marginTop: 10
-  }
-
-})
+    marginTop: 10,
+  },
+  category: {
+    color: '#6B7280',
+    fontSize: 16,
+    marginTop: 4,
+  },
+});

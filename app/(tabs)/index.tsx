@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { interpolate, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, {
+  interpolate,
+  runOnJS,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import DishCard from '@/components/DishCard';
 import { api } from '@/lib/api';
@@ -13,6 +21,10 @@ import DishDetailsModal from '@/components/DishDetailsModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
+
+function getParamName(dish: any, type: 'category' | 'cuisine' | 'flavour') {
+  return dish?.parameters?.find?.((p: any) => p?.type === type)?.name;
+}
 
 export default function ScrollScreen() {
   const { colors } = useTheme();
@@ -134,11 +146,21 @@ export default function ScrollScreen() {
       </View>
 
       <Animated.View style={[styles.leftGradient, leftGradientStyle]}>
-        <LinearGradient colors={['rgba(191,6,3,0.9)', 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFillObject} />
+        <LinearGradient
+          colors={['rgba(191,6,3,0.9)', 'transparent']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={StyleSheet.absoluteFillObject}
+        />
       </Animated.View>
 
       <Animated.View style={[styles.rightGradient, rightGradientStyle]}>
-        <LinearGradient colors={['transparent', 'rgba(3,86,191,0.9)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFillObject} />
+        <LinearGradient
+          colors={['transparent', 'rgba(3,86,191,0.9)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={StyleSheet.absoluteFillObject}
+        />
       </Animated.View>
 
       <GestureDetector gesture={pan}>
@@ -162,9 +184,9 @@ export default function ScrollScreen() {
       </GestureDetector>
 
       <View style={styles.chipsRow}>
-        {!!currentDish?.flavour?.name && <Chip label={currentDish.flavour.name} />}
-        {!!currentDish?.cuisine?.name && <Chip label={currentDish.cuisine.name} />}
-        {!!currentDish?.difficulty && <Chip label={String(currentDish.difficulty)} />}
+        {!!getParamName(currentDish, 'flavour') && <Chip label={getParamName(currentDish, 'flavour')} />}
+        {!!getParamName(currentDish, 'cuisine') && <Chip label={getParamName(currentDish, 'cuisine')} />}
+        {!!getParamName(currentDish, 'category') && <Chip label={getParamName(currentDish, 'category')} />}
       </View>
 
       <ActionBar

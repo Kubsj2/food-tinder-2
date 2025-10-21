@@ -39,11 +39,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus('authenticated');
   }, []);
 
-  const logout = useCallback(async () => {
-    await AsyncStorage.removeItem('token');
-    setToken(null);
-    setStatus('unauthenticated');
-  }, []);
+  // ...
+const logout = useCallback(async () => {
+  try {
+    await api.logout();
+  } catch (e) {
+    console.warn(e);
+  }
+  await AsyncStorage.removeItem('token');
+  setToken(null);
+  setStatus('unauthenticated');
+}, []);
+
+
 
   return <AuthContext.Provider value={{ status, token, login, logout }}>{children}</AuthContext.Provider>;
 }
