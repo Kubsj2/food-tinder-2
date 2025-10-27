@@ -18,6 +18,10 @@ type Props = {
   dish: any | null;
 };
 
+function getParamName(dish: any, type: 'category' | 'cuisine' | 'flavour') {
+  return dish?.parameters?.find?.((p: any) => p?.type === type)?.name;
+}
+
 export default function DishDetailsModal({ visible, onClose, dish }: Props) {
   const { colors } = useTheme();
   const scrimOpacity = useRef(new Animated.Value(0)).current;
@@ -44,9 +48,12 @@ export default function DishDetailsModal({ visible, onClose, dish }: Props) {
 
   if (!dish) return null;
 
+  const imageUri = dish?.image_url_full || dish?.image_url || undefined;
+
   const rows: [string, string | number | undefined][] = [
-    ["Kuchnia", dish?.cuisine?.name],
-    ["Smak", dish?.flavour?.name],
+    ["Kuchnia", getParamName(dish, 'cuisine')],
+    ["Smak", getParamName(dish, 'flavour')],
+    ["Kategoria", getParamName(dish, 'category')],
     ["Kalorie", dish?.calories],
     ["Cena", dish?.price],
   ];
@@ -63,17 +70,18 @@ export default function DishDetailsModal({ visible, onClose, dish }: Props) {
                 { borderColor: colors.border, backgroundColor: colors.bg },
               ]}
             >
-              <Image
-                source={{ uri: dish.image_url_full }}
-                style={styles.image}
-              />
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={styles.image} />
+              ) : (
+                <View style={[styles.image, { backgroundColor: colors.bgMuted }]} />
+              )}
             </View>
             <ScrollView
               contentContainerStyle={styles.body}
               showsVerticalScrollIndicator={false}
             >
               <Text style={[styles.title, { color: colors.text }]}>
-                {dish?.name}
+                {dish?.name ?? 'Bez nazwy'}
               </Text>
               {!!dish?.description && (
                 <Text style={[styles.desc, { color: colors.text }]}>

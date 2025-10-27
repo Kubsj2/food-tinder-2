@@ -38,7 +38,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
-      <AppTopBar />
+
       <View style={styles.body}>
         <Text style={[styles.email, { color: colors.text }]}>{email ?? 'Brak e-maila'}</Text>
         <View style={styles.spacer} />
